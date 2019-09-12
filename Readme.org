@@ -1,0 +1,18 @@
+#+TITLE: Blue Green ECS Service with custom CloudFormation
+#+DATE: Thu Sep 12 18:50:12 +0545 2019
+
+* Why custom ECS Service
+  AWS ECS Service supports three types of Deployment Controller([[https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_DeploymentController.html][For More Details]]):
+  - ECS (default)
+  - CODE_DEPLOY(blue/green)
+  - EXTERNAL
+
+    We can set CODE_DEPLOY as deployment controller and achieve BLUE/GREEN deployment of the ECS Service unfortunately there is no support to manipulate DeploymentController properties through Cloudformation. You should either use API/CLI or build your own custom cloudformation.
+
+* Creating Custom BG ECS service
+#+BEGIN_SRC shell
+git clone https://github.com/BalmanRawat/bgECSService.git
+cd create-ecs-service
+sam package --template-file saml.yaml --output-template-file packaged.yaml --s3-bucket <your-s3-bucket-name>
+aws cloudformation deploy --stack-name <stack-name> --template-file packaged.yaml --capabilities CAPABILITY_IAM
+#+END_SRC
