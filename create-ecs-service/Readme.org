@@ -13,6 +13,10 @@
       DeploymentController:
         Type: TypeOfController
       #+END_SRC
+    - *ServiceToken*
+      Required: Yes
+      Allowed Values: Arn of the Custom ECS Service provider Lambda
+      Type: Arn
 
 *** Caveats
     - Replacement Updates is not supported. When needed Stack should be deleted and created with the desired properties.
@@ -28,7 +32,7 @@
     DependsOn:
       - CreateBGServiceLambda
     Properties:
-      ServiceToken: arn:aws:iam::1234567:role/service-role
+      ServiceToken: arn:aws:lambda:us-east-1:123456789012:function:blue-green-ecs-service-provi-CreateBGServiceLambda-127CDSL6PYRJ0
       ClientToken: random-text-to-make-request-idempotent
       ServiceName: !Sub ${AWS::StackName}-service
       ## Cloudformation doesn't support configuring DeploymentController. Only because of this we had to create custom resource
