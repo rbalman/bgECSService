@@ -1,0 +1,9 @@
+version: 0.0
+Resources:
+  - TargetService:
+      Type: AWS::ECS::Service
+      Properties:
+        TaskDefinition: arn:aws:ecs:us-east-1:574574226067:task-definition/config-api
+        LoadBalancerInfo:
+          ContainerName: "config-api"
+          ContainerPort: 3000

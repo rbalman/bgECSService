@@ -1,0 +1,86 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Creates BlueGreen ecs service which is not supported by cloudformation by default as of now
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: osho
+
+Resources:
+  CreateBGServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: "sts:AssumeRole"
+            Principal:
+              Service: lambda.amazonaws.com
+      Policies:
+        - PolicyName: !Sub ${AWS::StackName}-service-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - codedeploy:CreateDeploymentGroup
+                  - codedeploy:DeleteDeploymentGroup
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - iam:PassRole
+                Resource: "*"
+
+  CreateBGServiceLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Timeout: 900
+      CodeUri: src/
+      Handler: main
+      Runtime: go1.x
+      Role: !GetAtt CreateBGServiceRole.Arn
+      
+  CustomDeploymentGroup:
+    Type: Custom::DeploymentGroup
+    Properties:
+      ServiceToken: !GetAtt CreateBGServiceLambda.Arn
+      ClientToken: laksdfjsld
+      ApplicationName: osho-cnm-codedeploy
+      DeploymentGroupName: osho-cnm-codedeploy-dg-local
+      DeploymentStyle:
+        DeploymentType: BLUE_GREEN
+        DeploymentOption: WITH_TRAFFIC_CONTROL
+      EcsServices:
+        - ClusterName: osho-cnm
+          ServiceName: osho-cnm-config-api
+      ServiceRoleArn: arn:aws:iam::574574226067:role/osho-codedeploy
+      BlueGreenDeploymentConfiguration:
+        DeploymentReadyOption:
+          ActionOnTimeout: STOP_DEPLOYMENT
+          WaitTimeInMinutes: '10'
+        TerminateBlueInstancesOnDeploymentSuccess:
+          Action: TERMINATE
+          TerminationWaitTimeInMinutes: '15'
+      LoadBalancerInfo:
+        TargetGroupPairInfoList:
+          -
+            TargetGroups:
+              - Name: osho-Targe-41657SP4W7LP
+              - Name: osho-Targe-V7X8FJ8H9IA9
+            ProdTrafficRoute:
+              ListenerArns:
+                - arn:aws:elasticloadbalancing:us-east-1:574574226067:listener/app/osho-LoadB-1JQEJL8NAAQX/578141fef28740fa/820d8ce9ab3e6e62
+            TestTrafficRoute:
+              ListenerArns:
+                - arn:aws:elasticloadbalancing:us-east-1:574574226067:listener/app/osho-LoadB-1JQEJL8NAAQX/578141fef28740fa/1d4fbf67ce5bd09f
+
+Outputs:
+  CreateBGServiceLambdaArn:
+    Description: Arn of the custom ECS service lambda
+    Value: !GetAtt CreateBGServiceLambda.Arn
+    Export:
+      Name: !Join [':', [!Ref EnvironmentName, 'CreateBGServiceLambdaArn']]
