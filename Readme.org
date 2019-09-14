@@ -8,7 +8,8 @@
   - EXTERNAL
 
     We can set CODE_DEPLOY as deployment controller and achieve BLUE/GREEN deployment of the ECS Service unfortunately there is no support to manipulate DeploymentController properties through Cloudformation. You should either use API/CLI or build your own custom cloudformation.
-
+  #+CAPTION: Native CloudFormation showing error while creating blue/green ECS Service
+  [[./images/bgService.png]]
 **** Creating Custom BG ECS service
    #+BEGIN_SRC shell
    git clone https://github.com/BalmanRawat/bgECSService.git
