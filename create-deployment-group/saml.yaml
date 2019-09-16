@@ -29,6 +29,7 @@ Resources:
                 Action:
                   - codedeploy:CreateDeploymentGroup
                   - codedeploy:DeleteDeploymentGroup
+                  - codedeploy:UpdateDeploymentGroup
                 Resource: "*"
               - Effect: Allow
                 Action:
@@ -49,5 +50,5 @@ Outputs:
     Description: Arn of the custom ECS service lambda
     Value: !GetAtt CreateBGServiceLambda.Arn
     Export:
-      Name: !Join [':', [!Ref EnvironmentName, 'CreateBGServiceLambdaArn']]
+      Name: !Join [':', [!Ref EnvironmentName, 'CreateBGDeploymentGroupLambdaArn']]
 
