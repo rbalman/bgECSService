@@ -2,9 +2,22 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: bgECSService
+  description: Create Blue Green Deployment for ECS using Custom CloudFormation
+  labels:
+    author: balman
+    language: golang
   annotations:
     github.com/project-slug: rbalman/bgECSService
+  tags:
+    - golang
+    - cloudformation
+  links:
+    - url: https://github.com/rbalman/bgECSService
+      title: README.md
+      icon: github
+      type: repo
 spec:
-  type: other
-  lifecycle: unknown
-  owner: one-time-owner
+  type: tool
+  lifecycle: production
+  owner: sre-team
+  system: custom-cfn
