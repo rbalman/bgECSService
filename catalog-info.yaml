@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: bgECSService
+  annotations:
+    github.com/project-slug: rbalman/bgECSService
+spec:
+  type: other
+  lifecycle: unknown
+  owner: one-time-owner
