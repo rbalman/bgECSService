@@ -19,5 +19,5 @@ metadata:
 spec:
   type: tool
   lifecycle: production
-  owner: sre-team
+  owner: engineering
   system: custom-cfn
